@@ -1,0 +1,29 @@
+{
+  "name": "prg-projectator",
+  "version": "0.1.0",
+  "description": "project-development boost utility",
+  "bin": {
+    "prg": "bin/prg"
+  },
+  "scripts": {
+    "test": "npm run test:lint",
+    "test:lint": "node ./node_modules/eslint/bin/eslint.js --ext .js src bin test *.js"
+  },
+  "author": "Pragonauts",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "fs-extra": "^2.0.0",
+    "fs-walk": "0.0.1",
+    "handlebars": "^4.0.6",
+    "mongodb": "^2.2.24",
+    "protagonist": "^1.6.5"
+  },
+  "devDependencies": {
+    "eslint": "^3.10.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.7.1"
+  }
+}

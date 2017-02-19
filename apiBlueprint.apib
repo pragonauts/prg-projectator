@@ -1,0 +1,337 @@
+FORMAT: 1A
+HOST: http://ourdomain.com/
+
+# Example API
+
+Example application description
+
+# Data Structures
+
+## Base User (object, fixed-type)
+
++ id: abcdef012345abcdef012345 (string, required) - user identifier
++ name: John Doe (string, required, nullable) - name of user
++ username: `UserName` (string, optional, nullable) - the user username
++ email: john@doe.com (string, optional, nullable) - users email
++ _removed: false (boolean) - flag of user removal
++ groups (array[Group], fixed-type)
++ isAdministrable: true (boolean, optional)
+
+## Group (object, fixed-type)
+
++ group: `company` (string, required)
++ domain: `company-id-1234` (string, optional)
+
+## Token (object, fixed-type)
+
++ userId: abcdef012345abcdef012345 (string, optional) - user identifier
++ token: abcdef012345abcdef012345abcdef012345abcdef012345 (string, required) - authorization token
+
+## Error (object)
+
++ error (string, required) - Error name
++ code: 400 (number, required) - Error code
+
+# Group Login & Registration
+
+## Registration API [POST /register]
+
+Create an user account
+
++ Request registration
+    + Attributes (object, fixed-type)
+        + email: some@email.com (string, required)
+        + password: somepassword (string, required)
+        + name: 'Some Name' (string)
+        + username: 'someUsername' (string)
+
++ Response 400 (application/json)
+    + Attributes (Error)
+
++ Response 200 (application/json)
+    + Attributes (Base User)
+
+
+## Login password API [POST /login/password]
+
+Get new Access Token with credentials
+
++ Request login with password (application/json)
+    + Attributes (object)
+        + id: myusername (string, required) - user identification
+        + password: blabla (string, required) - users password
+
+
++ Response 404 (application/json)
+    + Attributes (Error)
+        + error: Not found
+        + code: 404
+
++ Response 200 (application/json)
+    + Attributes (Token)
+
+## OAuth Login [/login/oauth]
+
+### Request Authentication [GET /login/oauth/authorize{?client_id,state,redirect_uri,response_type}]
+
++ Parameters
+    + client_id: `123` (string, required) - oauth client application id
+    + state: `30jr93n` (string, required) - required application state for security reasons
+    + redirect_uri: `https://some.url.com/?q=1` (string, required) - url callback
+    + response_type: token (enum, required) - response type
+
++ Response 301
+
+## Login with remote network API [GET /login/{network}{?connect_logged_user}]
+
+Trigger OAuth2 mechanism with selected remote network
+
++ Parameters
+    + network: `facebook` (enum[string], required)
+        + Members
+            + `facebook`
+    + connect_logged_user: `true` (boolean, optional) - If true, authenticated user is required.
+        + Default: `false`
+        + Members
+
++ Response 302 (application/json)
+
+
+## Exchange remote network code for new Access token [GET /login/{network}/loginCallback{?code,state,error_reason}]
+
+The method should redirect the user to the app when login successful.
+
++ Parameters
+    + code: `asdf65s1df65s1df` (string, required)
+    + state: `sfwe984fw9e1f9we98fe9w8f984` (string, required)
+    + error_reason: `Error reason` (string, optional)
+
++ Response 302
+
+## Store network user id [GET /login/{network}/connectCallback{?code,state,error_reason}]
+
++ Parameters
+    + code: `asdf65s1df65s1df` (string, required)
+    + state: `sfwe984fw9e1f9we98fe9w8f984` (string, required)
+    + error_reason: `Error reason` (string, optional)
+
++ Response 200 (application/json)
+    + Attributes (User)
+
+
+## Request reset password API [/reset-password]
+
+### Request password reset [POST]
+
++ Request password reset (application/json)
+    + Attributes (object)
+        + id: myusername (string, required) - user identification
+
++ Response 200 (application/json)
+
++ Response 404 (application/json)
+
+
+## Reset password API [/reset-password/{token}]
+
++ Parameters
+    + token: a651wevew61wef6f51ew6f15w6e5f (string, required)
+
+### Set up new password [POST]
+
++ Set up new password (application/json)
+    + Attributes (object)
+        + password: blabla (string, required) - users password
+
++ Response 200 (application/json)
+
++ Response 401 (application/json)
+
++ Response 404 (application/json)
+
+
+# Group User
+
+Contains user related tasks
+
+## User [/users/{id}]
+
++ Parameters
+    + id: abcdef012345abcdef012345 (string, required) - User identifier. Use `me` as `id` for authorized user.
+
++ Attributes (Base User)
+
+### Fetch single user [GET]
+
++ Response 200 (application/json)
+
+    + Attributes (User)
+
+### Remove user - mark as removed [DELETE]
+
++ Response 200 (application/json)
+
+    + Attributes (User)
+
++ Response 401 (application/json)
+    + Attributes (Error)
+
++ Response 403 (application/json)
+    + Attributes (Error)
+
++ Response 404 (application/json)
+    + Attributes (Error)
+
+### Update user [PUT]
+
++ Request change user password (application/json)
+
+    + Attributes (object)
+        + password: foo (string, required) - new password
+        + currentPassword: bar (string, required) - old password
+        + addGroups (array[Group])
+        + removeGroups (array[Group])
+
++ Response 200 (application/json)
+    + Attributes (User)
+
++ Response 400 (application/json)
+    + Attributes (Error)
+
++ Response 401 (application/json)
+    + Attributes (Error)
+
++ Response 403 (application/json)
+    + Attributes (Error)
+
+## Users Collection [/users]
+
++ Attributes (object)
+    + data (array[Base User])
+    + nextOffset: 0 (number) - offset of next page is `0` when there's no next page
+
+### List all users [GET /users{?approved,offset,limit,getIsAdministrable}]
+
++ Parameters
+    + approved: 1, 0 (enum, optional) - show just approved users
+    + offset (number, optional) - skip some users
+    + limit: 100 (number, optional) - show 100 users by default
+    + getIsAdministrable: true (boolean, optional) - if true, the isAdministrable property is returned for each user
+
++ Response 200 (application/json)
+    + Attributes (Users Collection)
+
+
+### Create new user [POST /users]
+
++ Request create a user (application/json)
+
+    + Attributes (object)
+        + email: some@email.com (string, required)
+        + username: foobar (string)
+        + name: `Foo Bar` (string)
+        + password: `somepassword` (string)
+
++ Response 200 (application/json)
+    + Attributes (User)
+
++ Response 403 (application/json)
+    + Attributes (Error)
+
++ Response 400 (application/json)
+    + Attributes (Error)
+
+# Group TestModel
+
+Contains model related tasks
+
+## TestModel [/testModels/{id}]
+
++ Parameters
+    + id: `abcdef012345abcdef012345` (string, required) - model identifier.
+
++ Attributes (object, fixed-type)
+    + id: `abcdef012345abcdef012345` (string, required) - model identifier
+    + name: `John Doe` (string, required) - name of model
+
+### Fetch single model [GET]
+
++ Response 200 (application/json)
+    + Attributes (TestModel)
+
++ Response 404 (application/json)
+    + Attributes (Error)
+
+### Remove testmodel - mark as removed [DELETE]
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + ok: 1 (number, required)
+
++ Response 404 (application/json)
+    + Attributes (Error)
+
++ Response 401 (application/json)
+    + Attributes (Error)
+
++ Response 403 (application/json)
+    + Attributes (Error)
+
+### Update testmodel [PUT]
+
++ Request change model password (application/json)
+
+    + Attributes (object)
+        + name: somename (string, optional)
+
++ Response 200 (application/json)
+    + Attributes (TestModel)
+
++ Response 400 (application/json)
+    + Attributes (Error)
+
++ Response 401 (application/json)
+    + Attributes (Error)
+
++ Response 403 (application/json)
+    + Attributes (Error)
+
++ Response 404 (application/json)
+    + Attributes (Error)
+
+
+## TestModels Collection [/testModels]
+
++ Attributes (object, fixed-type)
+    + data (array[TestModel])
+    + nextOffset: 0 (number, required) - offset of next page is `0` when there's no next page
+    + offset (number, required)
+
+### List all testmodel [GET /testModels{?offset,limit}]
+
++ Parameters
+    + offset (number, optional) - skip some models
+    + limit: 100 (number, optional) - show 100 models by default
+
++ Response 200 (application/json)
+    + Attributes (TestModels Collection)
+
+### Create new testmodel [POST /testModels]
+
++ Request create a testmodel (application/json)
+
+    + Attributes (object)
+        + name: `somename` (string, required)
+
++ Response 200 (application/json)
+    + Attributes (TestModel)
+
++ Response 400 (application/json)
+    + Attributes (Error)
+
++ Response 401 (application/json)
+    + Attributes (Error)
+
++ Response 403 (application/json)
+    + Attributes (Error)

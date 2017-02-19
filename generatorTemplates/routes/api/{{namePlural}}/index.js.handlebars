@@ -1,0 +1,20 @@
+
+'use strict';
+
+const express = require('express');
+{{#if getAll}}const {{name}}GetAll = require('./{{name}}GetAll');{{/if}}
+{{#if create}}const {{name}}Post = require('./{{name}}Post');{{/if}}
+{{#if get}}const {{name}}Get = require('./{{name}}Get');{{/if}}
+{{#if update}}const {{name}}Put = require('./{{name}}Put');{{/if}}
+{{#if delete}}const {{name}}Delete = require('./{{name}}Delete');{{/if}}
+
+const router = new express.Router();
+
+{{#if getAll}}router.get('/', {{name}}GetAll);{{/if}}
+{{#if create}}router.post('/', {{name}}Post);{{/if}}
+{{#if get}}router.get('/:id', {{name}}Get);{{/if}}
+{{#if update}}router.put('/:id', {{name}}Put);{{/if}}
+{{#if delete}}router.delete('/:id', {{name}}Delete);{{/if}}
+
+module.exports = router;
+

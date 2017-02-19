@@ -1,0 +1,10 @@
+
+/.idea/
+
+# NodeJs
+
+/npm-debug.log
+node_modules
+/typings
+/coverage
+/html-report
