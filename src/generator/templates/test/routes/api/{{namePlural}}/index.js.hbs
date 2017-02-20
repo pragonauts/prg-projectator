@@ -1,0 +1,214 @@
+/*
+ * @author David Menger
+ */
+'use strict';
+
+const assert = require('assert');
+const tester = require('../../tester');
+const { {{Name}} } = require('../../../../lib/{{namePlural}}');
+
+const PATH = '/api';
+const MODELS_PATH = '/{{namePlural}}';
+const MODEL_PATH = '/{{namePlural}}/{id}';
+
+const USER_READ = undefined;
+const USER_WRITE = 'user';
+const USER_UPDATE = 'user';
+const USER_REMOVE = 'user';
+
+function createModel () {
+    return tester.post(`${PATH}${MODELS_PATH}`, USER_WRITE)
+        .send(tester.api.request(MODELS_PATH, 'POST'))
+        .then(res => res.body);
+}
+
+describe(`${PATH}${MODELS_PATH}`, function () {
+
+    tester.before();
+
+    describe('{{Name}}', function () {
+
+        it('should modify search properties of document or leave', function () {
+                // create document
+            return {{Name}}.findOneAndUpdate({
+                search: 'itsimpossiblethatsomethiglikethatexitsfoobar1244345'
+            }, {
+                $set: {
+                    name: 'newname'
+                }
+            }, {
+                new: true,
+                upsert: true,
+                setDefaultsOnInsert: true
+            })
+            .then((doc) => {
+
+                // validate, that there is a string in search array
+                assert.equal(doc.name, 'newname');
+                assert(doc.__fulltext.some(str => str === 'newname'));
+
+                // can be updated with id field
+                return {{Name}}.findOneAndUpdate({ id: doc._id }, {}, { new: true });
+            })
+            // and can be removed statically also by id
+            .then(doc => {{Name}}.remove({ id: doc._id }))
+            .then((res) => {
+                assert.equal(res.nModified, 1, 'Should remove document');
+            });
+        });
+
+
+    });
+
+    describe('GET', function () {
+
+        it('should return 404 when object is not found', function () {
+            return tester.get(`${PATH}${MODELS_PATH}/fooBarId`, USER_READ)
+                .then(tester.expect(404, MODEL_PATH));
+        });
+
+        it('should return some object when found', function () {
+            return createModel()
+                .then(res => tester.get(`${PATH}${MODELS_PATH}/${res.id}`, USER_READ))
+                .then(tester.expect(200, MODEL_PATH));
+        });
+
+    });
+
+    describe('GET All', function () {
+
+        before(function () {
+            return Promise.all([
+                createModel(),
+                createModel(),
+                createModel()
+            ]);
+        });
+
+        it('should return data for API', function () {
+            return tester.get(`${PATH}${MODELS_PATH}`, USER_READ)
+                .then(tester.expect(200, MODELS_PATH))
+                .then((res) => {
+                    assert(res.body.data.length >= 3, 'There should at least three items');
+                });
+        });
+
+        it('should accept limit parameter', function () {
+            return tester.get(`${PATH}${MODELS_PATH}`, USER_READ)
+                .query({ limit: 1 })
+                .then(tester.expect(200, MODELS_PATH))
+                .then((res) => {
+                    assert.equal(res.body.data.length, 1, 'There should be one item');
+                    assert.strictEqual(res.body.offset, 0, 'There should be one item');
+                });
+        });
+
+        it('should find nothing when using wierd search', function () {
+            return tester.get(`${PATH}${MODELS_PATH}`, USER_READ)
+                .query({ search: 'wierdlongsearchstringwhichshouldnotbefoundbecauseitsimpossiblefobarhehe' })
+                .then(tester.expect(200, MODELS_PATH))
+                .then((res) => {
+                    assert.equal(res.body.data.length, 0, 'There should be no item');
+                });
+        });
+
+        it('should accept limi and offset parameter', function () {
+            return tester.get(`${PATH}${MODELS_PATH}`, USER_READ)
+                .query({ limit: 1, offset: 1 })
+                .then(tester.expect(200, MODELS_PATH))
+                .then((res) => {
+                    assert.equal(res.body.data.length, 1, 'There should be one item');
+                    assert.strictEqual(res.body.offset, 1, 'There should be one item');
+                });
+        });
+
+    });
+
+    describe('POST', function () {
+
+        it('should return 401 for unauthorized users', function () {
+            return tester.post(`${PATH}${MODELS_PATH}`)
+                .then(tester.expect(401, MODELS_PATH));
+        });
+
+        it('should return 400 when bad data provided', function () {
+            return tester.post(`${PATH}${MODELS_PATH}`, USER_WRITE)
+                .send({})
+                .then(tester.expect(400, MODELS_PATH));
+        });
+
+        it('should create new entity', function () {
+            return tester.post(`${PATH}${MODELS_PATH}`, USER_WRITE)
+                .send(tester.api.request(MODELS_PATH, 'POST'))
+                .then(tester.expect(200, MODELS_PATH));
+        });
+
+    });
+
+    describe('PUT', function () {
+
+        beforeEach(function () {
+            return createModel()
+                .then((res) => {
+                    this.id = res.id;
+                });
+        });
+
+        it('should return 404 when object is not found', function () {
+            return tester.put(`${PATH}${MODELS_PATH}/fooBarId`, USER_UPDATE)
+                .then(tester.expect(404, MODEL_PATH));
+        });
+
+        it('should return 401 for unauthorized users', function () {
+            return tester.put(`${PATH}${MODELS_PATH}/${this.id}`)
+                .then(tester.expect(401, MODEL_PATH));
+        });
+
+        it('should return 400 when bad data provided', function () {
+            return tester.put(`${PATH}${MODELS_PATH}/${this.id}`, USER_UPDATE)
+                .send({ name: null })
+                .then(tester.expect(400, MODEL_PATH));
+        });
+
+        it('should not modify entity with empty put', function () {
+            return tester.put(`${PATH}${MODELS_PATH}/${this.id}`, USER_UPDATE)
+                .send({})
+                .then(tester.expect(200, MODEL_PATH));
+        });
+
+        it('should update entity', function () {
+            return tester.put(`${PATH}${MODELS_PATH}/${this.id}`, USER_UPDATE)
+                .send(tester.api.request(MODEL_PATH, 'PUT'))
+                .then(tester.expect(200, MODEL_PATH));
+        });
+
+    });
+
+    describe('DELETE', function () {
+
+        beforeEach(function () {
+            return createModel()
+                .then((res) => {
+                    this.id = res.id;
+                });
+        });
+
+        it('should return 401 for unauthorized users', function () {
+            return tester.delete(`${PATH}${MODELS_PATH}/fooBarId`)
+                .then(tester.expect(401, MODEL_PATH));
+        });
+
+        it('should return 404 when bad data provided', function () {
+            return tester.delete(`${PATH}${MODELS_PATH}/fooBarId`, USER_REMOVE)
+                .then(tester.expect(404, MODEL_PATH));
+        });
+
+        it('should delete entity', function () {
+            return tester.delete(`${PATH}${MODELS_PATH}/${this.id}`, USER_REMOVE)
+                .then(tester.expect(200, MODEL_PATH));
+        });
+
+    });
+
+
+});

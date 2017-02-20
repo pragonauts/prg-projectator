@@ -1,0 +1,27 @@
+/*
+ * @author David Menger
+ */
+'use strict';
+
+const PrgValidator = require('prg-validator');
+
+function {{name}}Validator () {
+    const v = new PrgValidator();
+
+    v.CREATE = 'create';
+    v.UPDATE = 'update';
+
+    {{#each editableProperties}}
+    v.add('{{name}}'){{#unless required}};{{/unless}}
+    {{#if required}}
+        .if([v.CREATE])
+            .isRequired('{{Name}} is required')
+        .endIf()
+        .isRequiredIfPresent('{{Name}} cannot be empty');
+    {{/if}}
+
+    {{/each}}
+    return v;
+}
+
+module.exports = {{name}}Validator;

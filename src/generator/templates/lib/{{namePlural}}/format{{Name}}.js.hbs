@@ -1,0 +1,29 @@
+/*
+ * @author David Menger
+ */
+'use strict';
+
+function format{{Name}} (data) {
+    if (!data) {
+        return null;
+    }
+
+    let ret = data;
+
+    if (typeof data.toObject === 'function') {
+        ret = data.toObject();
+    }
+
+    if (ret._id) {
+        ret.id = ret._id;
+        delete ret._id;
+    }
+
+    delete ret.__v;
+    delete ret.__fulltext;
+    delete ret.__removed;
+
+    return ret;
+}
+
+module.exports = format{{Name}};

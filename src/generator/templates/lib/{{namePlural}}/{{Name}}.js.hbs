@@ -1,0 +1,185 @@
+/*
+* @author David Menger
+*/
+'use strict';
+
+const mongoose = require('mongoose');
+const util = require('../util');
+
+const { Schema, Model } = mongoose;
+
+/**
+ * MODEL
+ */
+
+const SEARCH_IN_FIELDS = [{{#each fulltextProperties}}'{{name}}'{{#unless @last}},{{/unless}}{{/each}}];
+
+const {{Name}} = new Schema({
+    {{#each properties}}
+    {{name}}: {
+        type: {{Classname}}
+    },
+    {{/each}}
+    __fulltext: [
+        { type: String, index: true }
+    ],
+    /* __lcEmail: {
+        type: String
+    },*/
+    __removed: {
+        type: Boolean,
+        default: false
+    }
+});
+
+/**
+ * COMPLEX INDEXES
+ */
+
+// lowercase unique index
+/* {{Name}}.index({ __lcEmail: 1 }, {
+    unique: true, partialFilterExpression: { __removed: false, __lcEmail: { $exists: true } }
+});*/
+
+// {{Name}}.index({  }, {  });
+
+/**
+ * @param {Object} conditions
+ * @returns {Object}
+ */
+function translateQueryConditions (conditions) {
+    const { id, search, includeRemoved } = conditions;
+
+    const ret = Object.assign({}, conditions);
+
+    delete ret.search;
+    delete ret.includeRemoved;
+    delete ret.id;
+
+    if (id && util.validators.isValidObjectId(id)) {
+        ret._id = new mongoose.Types.ObjectId(id);
+
+    } else if (typeof id !== 'undefined') {
+        ret._id = id;
+    }
+
+    // lowercase unique index
+    /* if (ret.email) {
+        ret.__lcEmail = ret.email.toLowerCase();
+        delete ret.email;
+    }*/
+
+    if (search) {
+        const fulltextCondition = util.model.createSearchCondition(search);
+        Object.assign(ret, fulltextCondition);
+    }
+
+    if (!includeRemoved) {
+        ret.__removed = false;
+    }
+
+    return ret;
+}
+
+/**
+ * STATIC METHODS
+ */
+
+// removed by attribute
+{{Name}}.methods.remove = function (...args) {
+    this.__removed = true;
+    return Model.prototype.save.apply(this, args);
+};
+
+// override find
+{{Name}}.statics.find = function (query, ...args) {
+    const newQuery = translateQueryConditions(query);
+    return Model.find.call(this, newQuery, ...args);
+};
+
+// search items by id
+{{Name}}.statics.findById = function (id, includeRemoved = false, ...args) {
+    if (!util.validators.isValidObjectId(id)) {
+        return Promise.resolve(null);
+    }
+    return this.find({ id, includeRemoved }, ...args)
+        .limit(1)
+        .then(vals => vals[0] || null);
+};
+
+{{Name}}.statics.remove = function (query) {
+    return Model.update.call(this, translateQueryConditions(query), { __removed: true });
+};
+
+/**
+ * HOOKS
+ */
+
+// update fulltext fields
+{{Name}}.post('validate', (doc) => { // works for save and insert many
+    Object.assign(doc, {
+        // __lcEmail: doc.email ? doc.email.toLowerCase() : undefined,
+        __fulltext: util.model.generateFulltextArray(doc, SEARCH_IN_FIELDS)
+    });
+});
+
+// edit
+['findOneAndUpdate', 'update'].forEach((method) => {
+    {{Name}}.pre(method, function preUpdate (next) {
+        // this._update
+
+        // lowercase email, missing $unset behavior
+        /* const { email } = this._update;
+        if (typeof email !== 'undefined') {
+            this._update.__lcEmail = email ? email.toLowerCase() : undefined;
+        }*/
+        const set = this._update.$set || {};
+        const update = Object.assign({}, set, this._update.$setOnInsert || {});
+
+        const isPropDefined = prop => typeof update[prop] !== 'undefined';
+        const updatingSearch = SEARCH_IN_FIELDS.some(isPropDefined);
+        if (updatingSearch) {
+            // prevention of partially update
+            const definedAllProperties = SEARCH_IN_FIELDS.every(isPropDefined);
+
+            if (!definedAllProperties) {
+                next(new Error('All fulltext fields has to be updated at the same time.'));
+                return;
+            }
+
+            this._update.$set = Object.assign(set, {
+                __fulltext: util.model.generateFulltextArray(
+                    update,
+                    SEARCH_IN_FIELDS
+                )
+            });
+        }
+
+        next();
+    });
+});
+
+// search
+['count', 'findOne', 'findOneAndRemove', 'findOneAndUpdate'].forEach((method) => {
+    {{Name}}.pre(method, function preUpdate (next) {
+        this._conditions = translateQueryConditions(this._conditions);
+        next();
+    });
+});
+
+
+// validate unique index errors
+/* {{Name}}.post('save', (error, res, next) => {
+    if (error.name === 'MongoError' && [11000, 11001].includes(error.code)) {
+        const translatedError = Object.assign(new Error('The email is already used.'), {
+            property: 'email',
+            status: 400
+        });
+        next(translatedError);
+    } else {
+        next(error);
+    }
+});*/
+
+
+module.exports = {{Name}};

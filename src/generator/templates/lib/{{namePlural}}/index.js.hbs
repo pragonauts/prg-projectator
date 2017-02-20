@@ -1,0 +1,15 @@
+/*
+ * @author David Menger
+ */
+'use strict';
+
+const mongoose = require('mongoose');
+const {{Name}} = require('./{{Name}}');
+const {{name}}Validator = require('./{{name}}Validator');
+const format{{Name}} = require('./format{{Name}}');
+
+module.exports = {
+    {{Name}}: mongoose.model('{{Name}}', {{Name}}),
+    {{name}}Validator,
+    format{{Name}}
+};

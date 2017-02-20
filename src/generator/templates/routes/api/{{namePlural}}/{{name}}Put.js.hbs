@@ -1,0 +1,33 @@
+/*
+ * @author David Menger
+ */
+'use strict';
+
+const coExpress = require('co-express');
+const { {{Name}}, format{{Name}}, {{name}}Validator } = require('../../../lib/{{namePlural}}');
+
+module.exports = coExpress(function* (req, res) {
+    if (!req.userId/* || !req.isAllowed('{{namePlural}}.edit')*/) {
+        if (req.userId) {
+            res.throw(403);
+        } else {
+            res.throw(401);
+        }
+        return;
+    }
+
+    const {{name}} = yield {{Name}}.findById(req.params.id);
+
+    if (!{{name}}) {
+        res.throw(404);
+        return;
+    }
+
+    const validator = {{name}}Validator();
+    const data = yield validator.validate(req.body, validator.UPDATE);
+
+    {{name}}.set(data);
+    yield {{name}}.save();
+
+    res.send(format{{Name}}({{name}}));
+});

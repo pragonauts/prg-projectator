@@ -1,0 +1,35 @@
+/*
+ * @author David Menger
+ */
+'use strict';
+
+const coExpress = require('co-express');
+const { {{Name}}, format{{Name}} } = require('../../../lib/{{namePlural}}');
+const apiUtils = require('../../../lib/apiUtils');
+
+const DEFAULT_LIMIT = 20;
+
+module.exports = coExpress(function* (req, res, next) {
+
+    /* if (!req.userId || !req.isAllowed('{{namePlural}}.view')) {
+        res.throw(403);
+        return;
+    }*/
+
+    const query = {{Name}}.find({
+        search: req.query.search
+        // includeRemoved: req.query.includeRemoved
+    });
+
+    apiUtils.streamListResponder(query)
+        .limit(req.query.limit, DEFAULT_LIMIT)
+        .offset(req.query.offset)
+        .sort(req.query.orderBy, {
+            {{#each sortableProperties}}
+            {{name}}: { {{dbName}}: 1 }{{#unless @last}},{{/unless}}
+            {{/each}}
+        }, req.query.order)
+        .map(format{{Name}}/* , args */)
+        .send(res, next);
+
+});

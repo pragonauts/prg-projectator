@@ -1,0 +1,155 @@
+/*
+ * @author David Menger
+ */
+
+import React from 'react';
+import { mount } from 'enzyme';
+import { assert } from 'chai';
+import {{NamePlural}} from '../../../../public/admin/views/{{NamePlural}}';
+import tester from '../../tester';
+
+function mockRouter (fn) {
+    return {
+        push: sinon.spy(fn)
+    };
+}
+
+function mockLocation () {
+    return { query: {} };
+}
+
+function nextTick () {
+    return new Promise(res => setTimeout(res, 1));
+}
+
+describe('views/<{{NamePlural}}>', function () {
+
+    before(function () {
+        this.defaultData = tester.api.response('/{{namePlural}}/{id}').body;
+    });
+
+    beforeEach(function () {
+        this.server = sinon.fakeServer.create();
+
+        this.server.respondWith(
+            'GET', /^\/api\/{{namePlural}}/,
+            [200, { 'Content-Type': 'application/json' },
+                JSON.stringify({ data: [this.defaultData] })]);
+
+        this.location = mockLocation();
+
+        this.app = mount(<{{NamePlural}}
+            resource="/api/{{namePlural}}/:id"
+            router={mockRouter(location => this.app.setProps({ location }))}
+            location={this.location}
+            t={t => t}
+        />);
+
+        this.server.respond();
+
+        return nextTick();
+    });
+
+    afterEach(function () {
+        this.server.restore();
+        this.server = null;
+
+        this.app.unmount();
+        this.app = null;
+    });
+
+    it('should just render the table with data', function () {
+        const cell = this.app
+            .find('td')
+            .findWhere(e => (e.text() === this.defaultData.{{requiredProperties.0.name}}));
+
+        assert(cell.exists(), 'should contain cell with {{requiredProperties.0.Name}} in it');
+    });
+
+    it('should render form for additions', function () {
+        // show the form
+        this.app.find('button.add-button').simulate('click');
+
+        assert(this.app.find('form.form-editor').exists(), 'there should be editor');
+    });
+
+    it('should not reload page, when the query is the same', function () {
+        const previousRequests = this.server.requests.length;
+        this.app.setProps({ location: this.location });
+        assert.equal(this.server.requests.length, previousRequests, 'no request should be fired');
+    });
+
+    it('should accept filter parameters', function () {
+
+        // there should be some rows
+        assert(this.app.find('tbody').find('tr').exists(), 'there should be rows');
+
+        // show the form
+        const form = this.app.find('form.form-filter');
+        const searchInput = form.find('Input')
+            .findWhere(input => input.find('input[name="search"]').exists());
+
+        // try to submit a form
+        const requests = this.server.requests.length;
+        searchInput.node.setValue('search string');
+        form.simulate('submit');
+
+        assert(this.app.find('.loading').exists(), 'editor should start loading');
+
+        assert.equal(this.server.requests.length, requests + 1,
+            'there should be two requests');
+        assert(this.server.requests[requests].url.match(/search=search%20string/),
+            'url has to contain search string');
+
+        this.server.respond();
+    });
+
+    it('should allow to edit the data', function () {
+
+        const editBtn = this.app.find('tbody')
+            .find('a').findWhere(a => a.text() === 'Edit');
+
+        assert(editBtn.exists(), 'There should be an edit button');
+
+        // open the form
+        editBtn.simulate('click');
+
+        // there should be a form
+        const form = this.app.find('form.form-editor');
+        assert(form.exists(), 'there should be editor');
+
+        // lets submit the form
+        const requests = this.server.requests.length;
+        form.simulate('submit');
+
+        return nextTick()
+            .then(() => {
+                assert.equal(this.server.requests.length, requests + 1, 'there should be new request');
+
+                this.server.respond();
+
+                return nextTick();
+            });
+    });
+
+    it('should allow to remove data', function () {
+        const editBtn = this.app.find('tbody')
+            .find('a').findWhere(a => a.text() === 'Remove');
+
+        assert(editBtn.exists(), 'There should be a remove button');
+
+        // open the form
+        editBtn.simulate('click');
+
+        // there should be delete confirmation button
+        const confirm = this.app.find('button.is-danger')
+            .findWhere(a => a.text() === 'Delete');
+        assert(confirm.exists(), 'there should be confirm button');
+
+        // lets click
+        const requests = this.server.requests.length;
+        confirm.simulate('click');
+        assert.equal(this.server.requests.length, requests + 1, 'there should be new request');
+    });
+
+});

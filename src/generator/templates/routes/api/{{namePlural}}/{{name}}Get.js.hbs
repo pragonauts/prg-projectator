@@ -1,0 +1,23 @@
+/*
+ * @author David Menger
+ */
+'use strict';
+
+const coExpress = require('co-express');
+const { {{Name}}, format{{Name}} } = require('../../../lib/{{namePlural}}');
+
+module.exports = coExpress(function* (req, res) {
+
+    /* if (!req.userId || !req.isAllowed('{{namePlural}}.view')) {
+        res.throw(403);
+        return;
+    }*/
+
+    const {{name}} = yield {{Name}}.findById(req.params.id);
+
+    if (!{{name}}) {
+        res.throw(404);
+    }
+
+    res.send(format{{Name}}({{name}}));
+});

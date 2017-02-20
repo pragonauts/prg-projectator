@@ -22,7 +22,7 @@ module.exports = function (program) {
             const blueprint = fs.readFileSync(path.join(projectDir, 'apiBlueprint.apib'), 'utf8');
             const generateRequest = blueprintToRequest(blueprint, name);
 
-            const templatesDir = path.join(projectDir, 'generatorTemplates');
+            const templatesDir = path.join(__dirname, 'templates');
             generateCode(generateRequest, templatesDir, projectDir);
         });
 

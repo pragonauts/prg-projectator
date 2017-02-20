@@ -1,0 +1,114 @@
+/**
+ * @author David Menger
+ */
+
+import React, { PropTypes, Component } from 'react';
+import { Input } from 'prg-form';
+import { TableBuilder, TableEditor, Editor, AjaxResource } from 'prg-editor';
+// import acl from '../lib/acl';
+import {{name}}Validator from '../../../lib/{{namePlural}}/{{name}}Validator';
+
+class {{NamePlural}} extends Component {
+
+    constructor (props) {
+        super(props);
+
+        this.validator = {{name}}Validator({});
+
+        /**
+         * @type {TableEditor}
+         */
+        this.tableEditor = null;
+
+        const tb = new TableBuilder();
+
+        const { t, location } = props;
+        const editable = true; // acl.isAllowed('{{namePlural}}.edit');
+
+        {{#each properties}}
+        tb.addText('{{name}}', t('{{Name}}')){{#unless sortable}};{{/unless}}
+            {{#if sortable}}.orderBy()
+            .orderByDefault();{{/if}}
+        {{/each}}
+
+        {{#if update}}tb.addAction('id', t('Edit'))
+            .onClick((e, data) => this.tableEditor.edit(data.id))
+            .condition(() => editable);
+        {{/if}}
+
+        {{#if delete}}tb.addAction('id', t('Remove'))
+            .onClick((e, data) => this.tableEditor.delete(data))
+            .condition(() => editable);
+        {{/if}}
+
+        const resource = new AjaxResource('/api/{{namePlural}}/:id');
+
+        this.state = {
+            disableAdd: !editable,
+            colsConfig: tb.getColsConfig(),
+            resource,
+            params: Object.assign({}, location.query),
+            _params: location.query
+        };
+    }
+
+    componentWillReceiveProps (props) {
+        if (props.location.query !== this.state._params) {
+            this.setState({
+                _params: props.location.query,
+                params: Object.assign({}, props.location.query)
+            });
+        }
+    }
+
+    onParamsChange (params) {
+        const { router, location } = this.props;
+
+        router.push(Object.assign({}, location, {
+            query: params
+        }));
+    }
+
+    render () {
+        const { t } = this.props;
+
+        return (<TableEditor
+            {...this.state}
+            ref={(c) => { this.tableEditor = c; }}
+            t={this.props.t}
+            onParamsChange={p => this.onParamsChange(p)}
+        >
+            <header>
+                <Input
+                    name="search"
+                    placeholder={t('Search …')}
+                    controlClass="is-expanded"
+                    iconBefore={<i className="fa fa-search" aria-hidden="true" />}
+                />
+            </header>
+            <Editor
+                validator={this.validator}
+                context=\{{
+                    create: this.validator.CREATE,
+                    update: this.validator.UPDATE
+                }}
+            >
+                {{#each editableProperties}}
+                <Input name="{{name}}" label={t('{{Name}}')} />
+                {{/each}}
+
+            </Editor>
+        </TableEditor>);
+    }
+
+}
+
+{{NamePlural}}.propTypes = {
+    t: PropTypes.func.isRequired,
+    router: PropTypes.objectOf(PropTypes.any).isRequired,
+    location: PropTypes.objectOf(PropTypes.any).isRequired
+};
+
+{{NamePlural}}.defaultProps = {};
+
+export default {{NamePlural}};
