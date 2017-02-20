@@ -1,9 +1,8 @@
 'use strict';
 
-// TODO fix next line!
-const protagonist = require('protagonist'); // eslint-disable-line
 const GenerateRequest = require('./GenerateRequest');
 const _ = require('lodash');
+const protagonist = require('protagonist'); // eslint-disable-line
 
 /**
  * @param {string} blueprint - the API Blueprint as plain text
