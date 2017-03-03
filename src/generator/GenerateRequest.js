@@ -91,7 +91,7 @@ class GenerateRequest {
      */
     constructor (name) {
 
-        this.name = name;
+        this.name = name.substr(0, 1).toLowerCase() + name.substr(1);
 
         this._properties = new Map();
 
