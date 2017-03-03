@@ -18,7 +18,12 @@ class GenerateRequest {
      * @returns {string}
      */
     get namePlural () {
-        return `${this.name}s`;
+
+        if (/y$/.test(this.name)) { // category -> categories
+            return `${this.name.substr(0, this.name.length - 1)}ies`;
+        }
+
+        return `${this.name}s`; // product -> products
     }
 
     /**
