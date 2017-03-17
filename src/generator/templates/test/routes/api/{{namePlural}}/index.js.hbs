@@ -18,7 +18,7 @@ const USER_REMOVE = 'user';
 
 function createModel () {
     return tester.post(`${PATH}${MODELS_PATH}`, USER_WRITE)
-        .send(tester.api.request(MODELS_PATH, 'POST'))
+        .send(tester.api.request(MODELS_PATH, 'POST').body)
         .then(res => res.body);
 }
 
@@ -139,7 +139,7 @@ describe(`${PATH}${MODELS_PATH}`, function () {
 
         it('should create new entity', function () {
             return tester.post(`${PATH}${MODELS_PATH}`, USER_WRITE)
-                .send(tester.api.request(MODELS_PATH, 'POST'))
+                .send(tester.api.request(MODELS_PATH, 'POST').body)
                 .then(tester.expect(200, MODELS_PATH));
         });
 
@@ -178,7 +178,7 @@ describe(`${PATH}${MODELS_PATH}`, function () {
 
         it('should update entity', function () {
             return tester.put(`${PATH}${MODELS_PATH}/${this.id}`, USER_UPDATE)
-                .send(tester.api.request(MODEL_PATH, 'PUT'))
+                .send(tester.api.request(MODEL_PATH, 'PUT').body)
                 .then(tester.expect(200, MODEL_PATH));
         });
 
