@@ -3,6 +3,7 @@
  */
 
 import React, { PropTypes, Component } from 'react';
+import Helmet from 'react-helmet';
 import { Input } from 'prg-form';
 import { TableBuilder, TableEditor, Editor, AjaxResource } from 'prg-editor';
 // import acl from '../lib/acl';
@@ -79,6 +80,7 @@ class {{NamePlural}} extends Component {
             onParamsChange={p => this.onParamsChange(p)}
         >
             <header>
+                <Helmet title={t('{{NamePlural}}')} />
                 <Input
                     name="search"
                     placeholder={t('Search …')}
