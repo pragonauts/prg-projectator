@@ -7,7 +7,7 @@ const coExpress = require('co-express');
 const { {{Name}} } = require('../../../lib/{{namePlural}}');
 
 module.exports = coExpress(function* (req, res) {
-    if (!req.userId/* || !req.isAllowed('{{namePlural}}.edit')*/) {
+    if (!req.userId/* || !req.isAllowed('{{namePlural}}.remove')*/) {
         if (req.userId) {
             res.throw(403);
         } else {
