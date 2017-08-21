@@ -6,16 +6,15 @@ const fs = require('fs');
 const blueprintToRequest = require('./blueprintToRequest');
 const generateCode = require('./generateCode');
 
-const description = 'Generate model, API, frontend and tests for an entity based on apiBlueprint.apib file and the code templates in /generatorTemplates path.';
-
 /**
  * @param {Command} program
  */
 module.exports = function (program) {
 
     program
-        .command('generate [name]', description, { isDefault: false })
-        .action((command, name) => {
+        .command('generate [name]')
+        .description('Generate model, API, frontend and tests for an entity based on apiBlueprint.apib file and the code templates in /generatorTemplates path.')
+        .action((name) => {
 
             const projectDir = process.cwd();
 

@@ -12,9 +12,10 @@
   "author": "Pragonauts",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.9.0",
+    "commander": "^2.11.0",
     "fs-extra": "^2.0.0",
     "fs-walk": "0.0.1",
+    "glob": "^7.1.2",
     "handlebars": "^4.0.6",
     "mongodb": "^2.2.24",
     "protagonist": "^1.6.5"
@@ -24,6 +25,7 @@
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.7.1"
+    "eslint-plugin-react": "^6.7.1",
+    "mocha": "^3.5.0"
   }
 }

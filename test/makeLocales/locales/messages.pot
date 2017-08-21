@@ -1,0 +1,13 @@
+#: botExample\index.js
+msgid "blabla"
+msgstr "blabla"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "response action"
+msgstr "response action"
+
+#: botExample\index.js, botExample\subfolder\subroute.js
+msgid "ahoj %s"
+msgstr "ahoj %s"
+
