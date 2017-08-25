@@ -10,8 +10,9 @@ const path = require('path');
 */
 module.exports = (sourceDir, targetDir) => {
 
-    const USAGE_REGEX = `[\\s{(,.](?:res\\.)?(tq?)\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;
-    const TRANSLATION_REGEX = new RegExp(`((?:res)?\\.text)?(?:${USAGE_REGEX})([^;]+)?;`, 'i');
+    /* const USAGE_REGEX = `[\\s{(,.](?:res\\.)?(tq?)\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;*/
+    /* const TRANSLATION_REGEX = new RegExp(`((?:res)?\\.text)?(?:${USAGE_REGEX})([^;]+)?;`, 'i');*/
+    const TRANSLATION_REGEX = `[\\s{(,.](?:res\\.)?(tq?)\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;
     console.log(TRANSLATION_REGEX);
     const COMMENT_REGEX = /'(.+?)'[;,]?\s*\/\/\s*i18/;
 
@@ -42,15 +43,8 @@ module.exports = (sourceDir, targetDir) => {
 
         (content.match(new RegExp(TRANSLATION_REGEX, 'g')) || [])
             .forEach((instance) => {
-                const [, isResText, func, simple, quickReplies] = instance.match(TRANSLATION_REGEX);
-
+                const [, func, simple] = instance.match(TRANSLATION_REGEX);
                 mapStrings(simple, func === 'tq');
-
-                if (isResText && quickReplies) {
-                    (quickReplies.match(new RegExp(USAGE_REGEX, 'g')) || [])
-                        .map(title => title.match(new RegExp(USAGE_REGEX))[2])
-                        .forEach(title => mapStrings(title, true));
-                }
             });
 
         (content.match(new RegExp(COMMENT_REGEX, 'g')) || [])
@@ -60,12 +54,10 @@ module.exports = (sourceDir, targetDir) => {
     process.stdout.write('\n\n');
 
     // sort
-    texts = Object.keys(texts)
-        .map(key => texts[key]);
+    texts = Object.keys(texts).map(key => texts[key]);
 
     // write the pot file
     const file = path.join(targetDir, 'messages.pot');
-    console.log(`Writing to: ${file}`);
     const f = fs.createWriteStream(file);
     texts.forEach((text) => {
         let header = '';
@@ -83,5 +75,6 @@ module.exports = (sourceDir, targetDir) => {
         f.write(`msgstr ${JSON.stringify(text.key)}\n\n`);
     });
     f.end('');
+    console.log(`Messages writed to: ${file}`);
 
 };

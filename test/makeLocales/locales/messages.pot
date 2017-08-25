@@ -1,128 +1,150 @@
 #: botExample\index.js
-msgid "I will ask you few questions about your preferences, which can help me to choose the right Saeco coffee machine for you."
-msgstr "I will ask you few questions about your preferences, which can help me to choose the right Saeco coffee machine for you."
+msgid "Could this be right thing for you?"
+msgstr "Could this be right thing for you?"
 
 #: botExample\index.js
-msgid "Let’s start with first question, could you call yourself a coffee guru, or do you just like coffee?"
-msgstr "Let’s start with first question, could you call yourself a coffee guru, or do you just like coffee?"
+msgid "Web detail"
+msgstr "Web detail"
+
+#: botExample\index.js
+msgid "I need to know more"
+msgstr "I need to know more"
+
+#: botExample\index.js
+msgid "Is it interesting for you?"
+msgstr "Is it interesting for you?"
+
+#: botExample\index.js
+msgid "Still want to know more? Check out the product web."
+msgstr "Still want to know more? Check out the product web."
+
+#: botExample\index.js
+msgid "lungo"
+msgstr "lungo"
+
+#: botExample\index.js
+msgid "cappuccino"
+msgstr "cappuccino"
+
+#: botExample\index.js
+msgid "latte macchiato"
+msgstr "latte macchiato"
+
+#: botExample\index.js
+msgid "flat white"
+msgstr "flat white"
+
+#: botExample\index.js
+msgid "doppio"
+msgstr "doppio"
+
+#: botExample\index.js
+msgid "Machine has Varipresso technology, which allows you to make coffee with mild taste thanks to lower pressure"
+msgstr "Machine has Varipresso technology, which allows you to make coffee with mild taste thanks to lower pressure"
+
+#: botExample\index.js
+msgid "It can prepare coffee with frothed milk automatically thanks to Latte Perfetto cattle with automatic cleaning."
+msgstr "It can prepare coffee with frothed milk automatically thanks to Latte Perfetto cattle with automatic cleaning."
+
+#: botExample\index.js
+msgid "Coffee machine has exclusive metal look"
+msgstr "Coffee machine has exclusive metal look"
+
+#: botExample\index.js
+msgid "Coffee machine has exclusive metal look and premium carafe"
+msgstr "Coffee machine has exclusive metal look and premium carafe"
+
+#: botExample\index.js
+msgid "Machine allows you to make up to %s servings without need for refilling cofee"
+msgstr "Machine allows you to make up to %s servings without need for refilling cofee"
+
+#: botExample\index.js
+msgid "You can also customize pre-brewing of coffee."
+msgstr "You can also customize pre-brewing of coffee."
+
+#: botExample\index.js
+msgid "Machine has %s degrees of grinder settings"
+msgstr "Machine has %s degrees of grinder settings"
+
+#: botExample\index.js
+msgid "Coffee machine has Panarello - steam jet, which you can use for milk frothing."
+msgstr "Coffee machine has Panarello - steam jet, which you can use for milk frothing."
+
+#: botExample\index.js
+msgid "Coffee machine has Cappuccino Frother - steam jet, which help you to make a milk foam."
+msgstr "Coffee machine has Cappuccino Frother - steam jet, which help you to make a milk foam."
+
+#: botExample\index.js
+msgid "So, the machine can make %s drinks, including %s and of course Espresso."
+msgstr "So, the machine can make %s drinks, including %s and of course Espresso."
+
+#: botExample\index.js
+msgid "As all Saeco coffee machine, this model has Ceramic Coffee grinder, integrated water filter has automated rinsing and de-scaling, fully removable brewing unit."
+msgstr "As all Saeco coffee machine, this model has Ceramic Coffee grinder, integrated water filter has automated rinsing and de-scaling, fully removable brewing unit."
+
+#: botExample\index.js
+msgid "You can also put parts of coffee machine into a dishwasher."
+msgstr "You can also put parts of coffee machine into a dishwasher."
+
+#: botExample\index.js
+msgid "Display has 2 colors (premium White) and more than 30 icons display"
+msgstr "Display has 2 colors (premium White) and more than 30 icons display"
+
+#: botExample\index.js
+msgid "Display has 2 colors (premium White) and more than 30 icons display and many languages"
+msgstr "Display has 2 colors (premium White) and more than 30 icons display and many languages"
+
+#: botExample\index.js
+msgid "Machine has good looking blue LCD display"
+msgstr "Machine has good looking blue LCD display"
+
+#: botExample\index.js
+msgid "As all Saeco machines are energy label compliant, this one has maximum power input %s W. Warranty is 24 months of course."
+msgstr "As all Saeco machines are energy label compliant, this one has maximum power input %s W. Warranty is 24 months of course."
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "I just like coffee"
-msgstr "I just like coffee"
+msgid "Tell me more"
+msgstr "Tell me more"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "I know my beans"
-msgstr "I know my beans"
-
-#: botExample\index.js
-msgid "Saeco machines has technology called Latte Perfecto, which can make you a cup of coffee with perfectly frothed milk by single press of the button."
-msgstr "Saeco machines has technology called Latte Perfecto, which can make you a cup of coffee with perfectly frothed milk by single press of the button."
-
-#: botExample\index.js
-msgid "And when you drink coffee with milk, do you prefer milk foam or do you just pour milk into it?"
-msgstr "And when you drink coffee with milk, do you prefer milk foam or do you just pour milk into it?"
+msgid "That's ok :)"
+msgstr "That's ok :)"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "I prefer foam"
-msgstr "I prefer foam"
+msgid "Why adjust grinder?"
+msgstr "Why adjust grinder?"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "I pour the milk"
-msgstr "I pour the milk"
+msgid "What is lungo?"
+msgstr "What is lungo?"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "Both"
-msgstr "Both"
-
-#: botExample\index.js
-msgid "How about flatwhite or espresso macchiato? "
-msgstr "How about flatwhite or espresso macchiato? "
+msgid "What is latte macchiato?"
+msgstr "What is latte macchiato?"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "I like this!"
-msgstr "I like this!"
+msgid "What is flat white?"
+msgstr "What is flat white?"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "Nah"
-msgstr "Nah"
+msgid "What is pannarello?"
+msgstr "What is pannarello?"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "Doesn't matter"
-msgstr "Doesn't matter"
-
-#. quick reply, max 20 chars
-#: botExample\index.js
-msgid "Espresso Macchiato?"
-msgstr "Espresso Macchiato?"
-
-#. quick reply, max 20 chars
-#: botExample\index.js
-msgid "Flat' white?"
-msgstr "Flat' white?"
+msgid "Cappuccino frother?"
+msgstr "Cappuccino frother?"
 
 #: botExample\index.js
-msgid "And do you stick with classic milk drinks like Cappuccino or Latte Macchiato or wanna try something special as well, like Flat White or Baby Cappuccino?"
-msgstr "And do you stick with classic milk drinks like Cappuccino or Latte Macchiato or wanna try something special as well, like Flat White or Baby Cappuccino?"
-
-#: botExample\index.js
-msgid "Some coffee machines can make unbeelievable range of beverages."
-msgstr "Some coffee machines can make unbeelievable range of beverages."
-
-#: botExample\index.js
-msgid "Or milk foam is not necessary for you?"
-msgstr "Or milk foam is not necessary for you?"
-
-#. quick reply, max 20 chars
-#: botExample\index.js
-msgid "Just classic"
-msgstr "Just classic"
-
-#. quick reply, max 20 chars
-#: botExample\index.js
-msgid "Special ones as well"
-msgstr "Special ones as well"
-
-#. quick reply, max 20 chars
-#: botExample\index.js
-msgid "Baby Cappuccino?"
-msgstr "Baby Cappuccino?"
-
-#. quick reply, max 20 chars
-#: botExample\index.js
-msgid "Flat white?"
-msgstr "Flat white?"
-
-#: botExample\index.js
-msgid "Is more important for you to have regular coffee"
-msgstr "Is more important for you to have regular coffee"
-
-#: botExample\index.js
-msgid "Regular coffee"
-msgstr "Regular coffee"
-
-#: botExample\index.js
-msgid "or be able to make special milk beverages like flat white or baby cappuccino (espresso macchiato)"
-msgstr "or be able to make special milk beverages like flat white or baby cappuccino (espresso macchiato)"
-
-#: botExample\index.js
-msgid "Need milk beverages"
-msgstr "Need milk beverages"
-
-#: botExample\index.js
-msgid "or be able to make make double espresso (Doppio)"
-msgstr "or be able to make make double espresso (Doppio)"
-
-#: botExample\index.js
-msgid "Want doppio"
-msgstr "Want doppio"
+msgid "Still want know more?"
+msgstr "Still want know more?"
 
 #: botExample\subfolder\subroute.js
 msgid "ahoj %s"
