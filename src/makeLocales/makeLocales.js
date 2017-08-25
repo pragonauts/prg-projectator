@@ -10,8 +10,8 @@ const path = require('path');
 */
 module.exports = (sourceDir, targetDir) => {
 
-    const USAGE_REGEX = `(?:[\\s{(,.]|req\\.)t\\('(.+?)'[^)]*\\)`;
-    const TRANSLATION_REGEX = new RegExp(`(res\\.text)?(?:${USAGE_REGEX})([^;]+)?;`, 'i');
+    const USAGE_REGEX = `[\\s{(,.](?:res\\.)?t\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;
+    const TRANSLATION_REGEX = new RegExp(`((?:res)?\\.text)?(?:${USAGE_REGEX})([^;]+)?;`, 'i');
     console.log(TRANSLATION_REGEX);
     const COMMENT_REGEX = /'(.+?)'[;,]?\s*\/\/\s*i18/;
 
@@ -27,7 +27,7 @@ module.exports = (sourceDir, targetDir) => {
 
         const mapStrings = (title, quickReply = false) => {
 
-            // console.log({ title, quickReply });
+            title = title.replace('\\\'', '\'');
 
             if (typeof texts[title] === 'undefined') {
                 texts[title] = {
@@ -61,24 +61,7 @@ module.exports = (sourceDir, targetDir) => {
 
     // sort
     texts = Object.keys(texts)
-        .map(key => texts[key])
-        .sort((a, b) => {
-            if (a.important !== b.important) {
-                return b.important ? 1 : -1;
-            }
-            let left = null;
-            let right = null;
-            if (a.files.length !== 0 && b.files.length !== 0) {
-                left = a.files.join(' ');
-                right = b.files.join(' ');
-            }
-            if (left === right) {
-                left = a.key;
-                right = b.key;
-            }
-
-            return left > right ? 1 : -1;
-        });
+        .map(key => texts[key]);
 
     // write the pot file
     const file = path.join(targetDir, 'messages.pot');

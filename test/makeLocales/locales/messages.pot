@@ -1,13 +1,130 @@
 #: botExample\index.js
-msgid "blabla"
-msgstr "blabla"
+msgid "I will ask you few questions about your preferences, which can help me to choose the right Saeco coffee machine for you."
+msgstr "I will ask you few questions about your preferences, which can help me to choose the right Saeco coffee machine for you."
+
+#: botExample\index.js
+msgid "Let’s start with first question, could you call yourself a coffee guru, or do you just like coffee?"
+msgstr "Let’s start with first question, could you call yourself a coffee guru, or do you just like coffee?"
 
 #. quick reply, max 20 chars
 #: botExample\index.js
-msgid "response action"
-msgstr "response action"
+msgid "I just like coffee"
+msgstr "I just like coffee"
 
-#: botExample\index.js, botExample\subfolder\subroute.js
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "I know my beans"
+msgstr "I know my beans"
+
+#: botExample\index.js
+msgid "Saeco machines has technology called Latte Perfecto, which can make you a cup of coffee with perfectly frothed milk by single press of the button."
+msgstr "Saeco machines has technology called Latte Perfecto, which can make you a cup of coffee with perfectly frothed milk by single press of the button."
+
+#: botExample\index.js
+msgid "And when you drink coffee with milk, do you prefer milk foam or do you just pour milk into it?"
+msgstr "And when you drink coffee with milk, do you prefer milk foam or do you just pour milk into it?"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "I prefer foam"
+msgstr "I prefer foam"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "I pour the milk"
+msgstr "I pour the milk"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Both"
+msgstr "Both"
+
+#: botExample\index.js
+msgid "How about flatwhite or espresso macchiato? "
+msgstr "How about flatwhite or espresso macchiato? "
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "I like this!"
+msgstr "I like this!"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Nah"
+msgstr "Nah"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Doesn't matter"
+msgstr "Doesn't matter"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Espresso Macchiato?"
+msgstr "Espresso Macchiato?"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Flat' white?"
+msgstr "Flat' white?"
+
+#: botExample\index.js
+msgid "And do you stick with classic milk drinks like Cappuccino or Latte Macchiato or wanna try something special as well, like Flat White or Baby Cappuccino?"
+msgstr "And do you stick with classic milk drinks like Cappuccino or Latte Macchiato or wanna try something special as well, like Flat White or Baby Cappuccino?"
+
+#: botExample\index.js
+msgid "Some coffee machines can make unbeelievable range of beverages."
+msgstr "Some coffee machines can make unbeelievable range of beverages."
+
+#: botExample\index.js
+msgid "Or milk foam is not necessary for you?"
+msgstr "Or milk foam is not necessary for you?"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Just classic"
+msgstr "Just classic"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Special ones as well"
+msgstr "Special ones as well"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Baby Cappuccino?"
+msgstr "Baby Cappuccino?"
+
+#. quick reply, max 20 chars
+#: botExample\index.js
+msgid "Flat white?"
+msgstr "Flat white?"
+
+#: botExample\index.js
+msgid "Is more important for you to have regular coffee"
+msgstr "Is more important for you to have regular coffee"
+
+#: botExample\index.js
+msgid "Regular coffee"
+msgstr "Regular coffee"
+
+#: botExample\index.js
+msgid "or be able to make special milk beverages like flat white or baby cappuccino (espresso macchiato)"
+msgstr "or be able to make special milk beverages like flat white or baby cappuccino (espresso macchiato)"
+
+#: botExample\index.js
+msgid "Need milk beverages"
+msgstr "Need milk beverages"
+
+#: botExample\index.js
+msgid "or be able to make make double espresso (Doppio)"
+msgstr "or be able to make make double espresso (Doppio)"
+
+#: botExample\index.js
+msgid "Want doppio"
+msgstr "Want doppio"
+
+#: botExample\subfolder\subroute.js
 msgid "ahoj %s"
 msgstr "ahoj %s"
 
