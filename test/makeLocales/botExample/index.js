@@ -4,95 +4,204 @@
 'use strict';
 
 const { Router } = require('botnaut');
+const { chooseProductByState } = require('./productKnowledge');
+
+const TELL_ME_MORE_LIMIT = 3;
+const SKIP_EXPERT_FLOWS = [
+    'preBrewing', 'ceramicGrinder'
+];
 
 const bot = new Router();
 
-/**
- * BEGINNER OR EXPERT
- */
-bot.use('/', (req, res) => {
-    res.text(res.t('I will ask you few questions about your preferences, which can help me to choose the right Saeco coffee machine for you.'));
-    res.text(res.t('Let’s start with first question, could you call yourself a coffee guru, or do you just like coffee?'), {
-            beginner: res.t('I just like coffee'),
-            expert: res.t('I know my beans')
-        })
-        .expected('resolveExpert');
 
-    // @todo "still expert?"
+/**
+ * INITIAL
+ */
+bot.use('/', (req, res, postBack) => {
+    res.text(res.t('Could this be right thing for you?'));
+
+    postBack('yourMachine');
 });
 
 /**
- * MILK FOAM INTERACTION
+ * YOUR MACHINE
  */
-bot.use('milkFoam', (req, res) => {
-    res.text(res.t('Saeco machines has technology called Latte Perfecto, which can make you a cup of coffee with perfectly frothed milk by single press of the button.'));
-    res.text(res.t('And when you drink coffee with milk, do you prefer milk foam or do you just pour milk into it?'), {
-            withFoam: res.t('I prefer foam'),
-            withoutFoam: res.t('I pour the milk'),
-            bothFoam: res.t('Both')
-        })
-        .expected('resolveFoamOrNot');
-});
+bot.use('yourMachine', (req, res) => {
+    const product = chooseProductByState(req.state);
 
-/**
- * Milky Specials interaction
- */
-bot.use('milkySpecials', (req, res) => {
-    if (req.state.expert) {
-        res.text(res.t('How about flatwhite or espresso macchiato? '), {
-            specialMilkyCoffees: res.t('I like this!'),
-            justClassicCoffees: res.t('Nah'),
-            doesntMatter: res.t('Doesn\'t matter'),
-            babyCappuccino: res.t('Espresso Macchiato?'),
-            flatWhite: res.t('Flat\' white?')
-        });
+    const tpl = res.genericTemplate();
+
+    tpl.addElement(`${product.name} ${product.productCode}`, '80 chars of description required')
+        .setElementUrl(product.link)
+        .urlButton(res.t('Web detail'), product.link);
+
+    tpl.send();
+
+    const replies = {
+        tellMe: res.t('I need to know more')
+    };
+
+    if (req.state.currentProductCode !== product.productCode) {
+        res.setState({ currentProductCode: product.productCode });
+        res.text(res.t('Is it interesting for you?'), replies);
     } else {
-        res.text(res.t('And do you stick with classic milk drinks like Cappuccino or Latte Macchiato or wanna try something special as well, like Flat White or Baby Cappuccino?'));
-        res.text(res.t('Some coffee machines can make unbeelievable range of beverages.'));
-        res.text(res.t('Or milk foam is not necessary for you?'), {
-                justClassicCoffees: res.t('Just classic'),
-                specialMilkyCoffees: res.t('Special ones as well'),
-                babyCappuccino: res.t('Baby Cappuccino?'),
-                flatWhite: res.t('Flat white?')
-            });
+        res.text(res.t('Still want to know more? Check out the product web.'), replies);
     }
-
-    res.expected('resolveSpecials');
 });
 
-/**
- * Opposite Requirements Prioritization interaction
- */
-bot.use('oppositesPrioritization', (req, res, postBack) => {
-    const { wantVaripresso, wantMilkySpecials, wantDouble } = req.state;
-    const inConflict = wantVaripresso && (wantMilkySpecials || wantDouble);
 
-    if (!inConflict) {
-        postBack('userSettings'); // skip when there's no conflict
+// fake texts for translator
+const { beverages, knowledgeBase } = ((res = { t: w => w }) => ({
+    beverages: {
+        lungo: res.t('lungo'),
+        cappuccino: res.t('cappuccino'),
+        latteMacchiato: res.t('latte macchiato'),
+        flatWhite: res.t('flat white'),
+        doppio: res.t('doppio')
+    },
+    knowledgeBase: {
+        varipresso: res.t('Machine has Varipresso technology, which allows you to make coffee with mild taste thanks to lower pressure'),
+        foam: res.t('It can prepare coffee with frothed milk automatically thanks to Latte Perfetto cattle with automatic cleaning.'),
+        premiumDesign: [
+            res.t('Coffee machine has exclusive metal look'),
+            res.t('Coffee machine has exclusive metal look and premium carafe')
+        ],
+        upToServings: res.t('Machine allows you to make up to %s servings without need for refilling cofee'),
+        preBrewing: res.t('You can also customize pre-brewing of coffee.'),
+        grinderAdjustments: res.t('Machine has %s degrees of grinder settings'),
+        pannarello: res.t('Coffee machine has Panarello - steam jet, which you can use for milk frothing.'),
+        cappuccinoFrother: res.t('Coffee machine has Cappuccino Frother - steam jet, which help you to make a milk foam.'),
+        beverages: res.t('So, the machine can make %s drinks, including %s and of course Espresso.'),
+        ceramicGrinder: res.t('As all Saeco coffee machine, this model has Ceramic Coffee grinder, integrated water filter has automated rinsing and de-scaling, fully removable brewing unit.'),
+        dishwasherProof: res.t('You can also put parts of coffee machine into a dishwasher.'),
+        guiType: [
+            res.t('Display has 2 colors (premium White) and more than 30 icons display'),
+            res.t('Display has 2 colors (premium White) and more than 30 icons display and many languages'),
+            res.t('Machine has good looking blue LCD display')
+        ],
+        powerConsumption: res.t('As all Saeco machines are energy label compliant, this one has maximum power input %s W. Warranty is 24 months of course.')
+    }
+}))();
+
+/**
+ * TELL ME MORE INTERACTION
+ */
+bot.use('tellMe', (req, res, postBack) => {
+    const { expert, tellMeMoreProduct } = req.state;
+    const product = chooseProductByState(req.state);
+
+    if (tellMeMoreProduct === product.productCode) {
+        postBack('tellMeMore');
         return;
     }
 
-    const send = [res.t('Is more important for you to have regular coffee')];
+    const tellMeMoreFeatures = Object.keys(knowledgeBase)
+        .filter(feature => !!product[feature]
+            && (expert || SKIP_EXPERT_FLOWS.indexOf(feature) === -1))
+        .reverse()
+        .reduce((obj, feature) => Object.assign(obj, {
+            [feature]: product[feature]
+        }), {});
+
+    const tellMeMoreBeverages = Object.keys(beverages)
+        .filter(beverage => !!product[beverage])
+        .reduce((obj, beverage) => Object.assign(obj, {
+            [beverage]: product[beverage]
+        }), {});
+
+    res.setState({
+        tellMeMoreProduct: product.productCode,
+        tellMeMoreFeatures,
+        tellMeMoreBeverages,
+        tellMeMoreOffset: 0
+    });
+
+    postBack('tellMeMore');
+});
+
+bot.use('tellMeMore', (req, res, postBack) => {
+    const { tellMeMoreFeatures, tellMeMoreBeverages } = req.state;
+    const featuresKeys = Object.keys(tellMeMoreFeatures);
+    let { tellMeMoreOffset } = req.state;
+
+    if (tellMeMoreOffset >= featuresKeys.length) {
+        // over, let's reset values
+        tellMeMoreOffset = 0;
+    }
+
+    const tellMeMoreEnd = Math.min(tellMeMoreOffset + TELL_ME_MORE_LIMIT, featuresKeys.length - 1);
+    const isLast = tellMeMoreEnd >= featuresKeys.length - 1;
+
     const replies = {
-        preferRegular: res.t('Regular coffee')
+        tellMeMore: res.tq('Tell me more'),
+        yourMachine: res.tq('That\'s ok :)')
     };
 
-    if (wantMilkySpecials) {
-        send.push(res.t('or be able to make special milk beverages like flat white or baby cappuccino (espresso macchiato)'));
-        Object.assign(replies, { preferSpecials: res.t('Need milk beverages') });
-    }
-    if (wantDouble) {
-        send.push(res.t('or be able to make make double espresso (Doppio)'));
-        Object.assign(replies, { preferDoppio: res.t('Want doppio') });
-    }
-    send.forEach((message, i) => {
-        if (i + 1 === send.length) {
-            res.text(message, replies); // last will be with replies
+    const talkAbout = featuresKeys.slice(tellMeMoreOffset, tellMeMoreEnd)
+        .map((feature) => {
+            switch (feature) {
+                case 'upToServings':
+                    return res.t(knowledgeBase.upToServings)
+                        .replace('%s', tellMeMoreFeatures.upToServings);
+                case 'grinderAdjustments':
+                    Object.assign(replies, {
+                        whyAdjustGrinder: res.tq('Why adjust grinder?')
+                    });
+                    return res.t(knowledgeBase.grinderAdjustments)
+                        .replace('%s', tellMeMoreFeatures.grinderAdjustments);
+                case 'beverages': {
+                    const translatedBeverages = Object.keys(tellMeMoreBeverages)
+                        .map(bev => res.t(beverages[bev]));
+
+                    if (tellMeMoreBeverages.lungo) {
+                        Object.assign(replies, { whatIsLungo: res.tq('What is lungo?') });
+                    }
+
+                    if (tellMeMoreBeverages.latteMacchiato) {
+                        Object.assign(replies, { whatIsLatteMacchiato: res.tq('What is latte macchiato?') });
+                    }
+
+                    if (tellMeMoreBeverages.latteMacchiato) {
+                        Object.assign(replies, { whatIsFlatWhite: res.tq('What is flat white?') });
+                    }
+
+                    return res.t(knowledgeBase.beverages)
+                        .replace('%s', tellMeMoreFeatures.beverages)
+                        .replace('%s', translatedBeverages.join(', '));
+                }
+                case 'powerConsumption':
+                    return res.t(knowledgeBase.powerConsumption)
+                        .replace('%s', tellMeMoreFeatures.powerConsumption);
+                default: {
+                    if (feature === 'pannarello') {
+                        Object.assign(replies, { whatIsPannarello: res.tq('What is pannarello?') });
+                    } else if (feature === 'cappuccinoFrother') {
+                        Object.assign(replies, { whatIsFrother: res.tq('Cappuccino frother?') });
+                    }
+                    if (!Array.isArray(knowledgeBase[feature])) {
+                        return res.t(knowledgeBase[feature]);
+                    }
+                    const textIndex = tellMeMoreFeatures[feature];
+                    return res.t(knowledgeBase[feature][textIndex - 1]);
+                }
+            }
+        });
+
+
+    talkAbout.forEach((sentence, i) => {
+        if (i + 1 === talkAbout.length && !isLast) {
+            res.text(sentence, replies);
         } else {
-            res.text(message);
+            res.text(sentence);
         }
     });
-    res.expected('resolveOpposites');
+
+    res.setState({ tellMeMoreOffset: tellMeMoreOffset + TELL_ME_MORE_LIMIT });
+
+    if (isLast) {
+        res.text(res.t('Still want know more?'));
+        postBack('yourMachine');
+    }
 });
 
 module.exports = bot;

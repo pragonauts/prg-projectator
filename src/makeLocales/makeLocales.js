@@ -10,7 +10,7 @@ const path = require('path');
 */
 module.exports = (sourceDir, targetDir) => {
 
-    const USAGE_REGEX = `[\\s{(,.](?:res\\.)?t\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;
+    const USAGE_REGEX = `[\\s{(,.](?:res\\.)?(tq?)\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;
     const TRANSLATION_REGEX = new RegExp(`((?:res)?\\.text)?(?:${USAGE_REGEX})([^;]+)?;`, 'i');
     console.log(TRANSLATION_REGEX);
     const COMMENT_REGEX = /'(.+?)'[;,]?\s*\/\/\s*i18/;
@@ -42,13 +42,13 @@ module.exports = (sourceDir, targetDir) => {
 
         (content.match(new RegExp(TRANSLATION_REGEX, 'g')) || [])
             .forEach((instance) => {
-                const [, isResText, simple, quickReplies] = instance.match(TRANSLATION_REGEX);
+                const [, isResText, func, simple, quickReplies] = instance.match(TRANSLATION_REGEX);
 
-                mapStrings(simple, false);
+                mapStrings(simple, func === 'tq');
 
                 if (isResText && quickReplies) {
                     (quickReplies.match(new RegExp(USAGE_REGEX, 'g')) || [])
-                        .map(title => title.match(new RegExp(USAGE_REGEX))[1])
+                        .map(title => title.match(new RegExp(USAGE_REGEX))[2])
                         .forEach(title => mapStrings(title, true));
                 }
             });
@@ -75,7 +75,7 @@ module.exports = (sourceDir, targetDir) => {
         header += `#: ${text.files.join(', ')}\n`;
 
         if (text.files.length > 1) {
-            console.warn(`The ${JSON.stringify(text.key)} is used in multiple files! ${text.files.join(', ')}`);
+            console.warn(`The ${JSON.stringify(text.key)} is used in multiple places! ${text.files.join(', ')}`);
         }
 
         f.write(header);
