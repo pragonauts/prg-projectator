@@ -49,7 +49,7 @@ module.exports = (sourceDir, targetDir) => {
 
         (content.match(new RegExp(COMMENT_REGEX, 'g')) || [])
             .map(title => title.match(COMMENT_REGEX)[1])
-            .forEach(mapStrings);
+            .forEach(w => mapStrings(w));
     });
     process.stdout.write('\n\n');
 
@@ -64,7 +64,7 @@ module.exports = (sourceDir, targetDir) => {
         let quickReply = '';
         if (text.quickReply) {
             header += '#. quick reply, max 20 chars\n';
-            quickReply += '- quick reply';
+            quickReply += ' - quick reply';
         }
         header += `#: ${text.files
             .map(t => t.replace(/\.js$/, ''))
