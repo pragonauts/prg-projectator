@@ -12,7 +12,7 @@ module.exports = (sourceDir, targetDir) => {
 
     /* const USAGE_REGEX = `[\\s{(,.](?:res\\.)?(tq?)\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;*/
     /* const TRANSLATION_REGEX = new RegExp(`((?:res)?\\.text)?(?:${USAGE_REGEX})([^;]+)?;`, 'i');*/
-    const TRANSLATION_REGEX = `[\\s{(,.](?:res\\.)?(tq?)\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`;
+    const TRANSLATION_REGEX = `[\\s{(,.](?:res\\.)?(tq?)\\('((?:.+?(?:\\\\')?)+?)'[^)]*\\)`; // eslint-disable-line
     console.log(TRANSLATION_REGEX);
     const COMMENT_REGEX = /'(.+?)'[;,]?\s*\/\/\s*i18/;
 
@@ -28,17 +28,17 @@ module.exports = (sourceDir, targetDir) => {
 
         const mapStrings = (title, quickReply = false) => {
 
-            title = title.replace('\\\'', '\'');
+            const key = title.replace('\\\'', '\'');
 
-            if (typeof texts[title] === 'undefined') {
-                texts[title] = {
-                    key: title,
+            if (typeof texts[key] === 'undefined') {
+                texts[key] = {
+                    key,
                     files: [],
                     important: false,
                     quickReply
                 };
             }
-            texts[title].files.push(path.relative(sourceDir, file));
+            texts[key].files.push(path.relative(sourceDir, file));
         };
 
         (content.match(new RegExp(TRANSLATION_REGEX, 'g')) || [])
@@ -61,10 +61,14 @@ module.exports = (sourceDir, targetDir) => {
     const f = fs.createWriteStream(file);
     texts.forEach((text) => {
         let header = '';
+        let quickReply = '';
         if (text.quickReply) {
             header += '#. quick reply, max 20 chars\n';
+            quickReply += '- quick reply';
         }
-        header += `#: ${text.files.join(', ')}\n`;
+        header += `#: ${text.files
+            .map(t => t.replace(/\.js$/, ''))
+            .join(', ')}${quickReply}\n`;
 
         if (text.files.length > 1) {
             console.warn(`The ${JSON.stringify(text.key)} is used in multiple places! ${text.files.join(', ')}`);

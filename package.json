@@ -1,6 +1,6 @@
 {
   "name": "prg-projectator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "project-development boost utility",
   "bin": {
     "prg": "bin/prg"
@@ -21,6 +21,7 @@
     "protagonist": "^1.6.5"
   },
   "devDependencies": {
+    "botnaut": "^0.22.0",
     "eslint": "^3.10.2",
     "eslint-config-airbnb": "^13.0.0",
     "eslint-plugin-import": "^2.2.0",

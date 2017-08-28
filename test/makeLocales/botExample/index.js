@@ -4,7 +4,6 @@
 'use strict';
 
 const { Router } = require('botnaut');
-const { chooseProductByState } = require('./productKnowledge');
 
 const TELL_ME_MORE_LIMIT = 3;
 const SKIP_EXPERT_FLOWS = [
@@ -23,11 +22,19 @@ bot.use('/', (req, res, postBack) => {
     postBack('yourMachine');
 });
 
+function chooseProductByState () {
+    return {
+        name: 'Product',
+        productCode: '123',
+        link: 'http://google.cz'
+    };
+}
+
 /**
  * YOUR MACHINE
  */
 bot.use('yourMachine', (req, res) => {
-    const product = chooseProductByState(req.state);
+    const product = chooseProductByState();
 
     const tpl = res.genericTemplate();
 
@@ -88,7 +95,7 @@ const { beverages, knowledgeBase } = ((res = { t: w => w }) => ({
  */
 bot.use('tellMe', (req, res, postBack) => {
     const { expert, tellMeMoreProduct } = req.state;
-    const product = chooseProductByState(req.state);
+    const product = chooseProductByState();
 
     if (tellMeMoreProduct === product.productCode) {
         postBack('tellMeMore');
