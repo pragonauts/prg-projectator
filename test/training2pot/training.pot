@@ -1,0 +1,9 @@
+
+#. {"intent":"whySaeco","entities":[]}
+msgid "Why to choose Saeco"
+msgstr "Why to choose Saeco"
+
+
+#. {"intent":"premiumDesign","entities":[]}
+msgid "How about design"
+msgstr "How about design"

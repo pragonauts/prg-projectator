@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const { Router } = require('botnaut');
+const { Router } = require('botnaut'); // eslint-disable-line
 
 const TELL_ME_MORE_LIMIT = 3;
 const SKIP_EXPERT_FLOWS = [

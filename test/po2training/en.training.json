@@ -1,0 +1,16 @@
+{
+    "rasa_nlu_data": {
+        "common_examples": [
+            {
+                "text": "aaa",
+                "intent": "whySaeco",
+                "entities": []
+            },
+            {
+                "text": "bbb",
+                "intent": "premiumDesign",
+                "entities": []
+            }
+        ]
+    }
+}

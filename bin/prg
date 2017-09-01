@@ -5,8 +5,12 @@
 const program = require('commander');
 const generator = require('../src/generator');
 const makeLocales = require('../src/makeLocales');
+const training2pot = require('../src/training2pot');
+const po2training = require('../src/po2training');
 
 generator(program);
 makeLocales(program);
+training2pot(program);
+po2training(program);
 
 program.parse(process.argv);
