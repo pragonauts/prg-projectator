@@ -1,6 +1,6 @@
 {
   "name": "prg-projectator",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "project-development boost utility",
   "bin": {
     "prg": "bin/prg"
